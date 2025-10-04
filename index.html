@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI-Driven DSP Hardware Accelerator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.19.0",
+    "recharts": "https://aistudiocdn.com/recharts@^3.2.0",
+    "jszip": "https://aistudiocdn.com/jszip@^3.10.1"
+  }
+}
+</script>
+  <style>
+    /* Default Dark Theme */
+    :root.dark.theme-dark {
+      --color-primary: #22d3ee; /* cyan-400 */
+      --color-primary-hover: #06b6d4; /* cyan-500 */
+      --color-primary-text: #ffffff;
+      --color-secondary-accent: #ec4899; /* pink-500 */
+      --color-secondary-accent-hover: #db2777; /* pink-600 */
+      --color-bg-main: #111827; /* gray-900 */
+      --color-bg-panel: #1f2937; /* gray-800 */
+      --color-text-main: #f9fafb; /* gray-50 */
+      --color-text-secondary: #9ca3af; /* gray-400 */
+      --color-border-main: #374151; /* gray-700 */
+      --color-chart-input: #f59e0b; --color-chart-clean: #e5e7eb; --color-chart-baseline: #6b7280; --color-chart-optimized: #22d3ee; --color-chart-custom: #ec4899; --color-chart-grid: #4b5563;
+    }
+    /* Light Theme */
+    :root.light.theme-light {
+      --color-primary: #0891b2; /* cyan-600 */
+      --color-primary-hover: #06b6d4; /* cyan-500 */
+      --color-primary-text: #ffffff;
+      --color-secondary-accent: #db2777; /* pink-600 */
+      --color-secondary-accent-hover: #be185d; /* pink-700 */
+      --color-bg-main: #f3f4f6; /* gray-100 */
+      --color-bg-panel: #ffffff; /* white */
+      --color-text-main: #111827; /* gray-900 */
+      --color-text-secondary: #4b5563; /* gray-600 */
+      --color-border-main: #e5e7eb; /* gray-200 */
+      --color-chart-input: #d97706; --color-chart-clean: #374151; --color-chart-baseline: #6b7280; --color-chart-optimized: #0891b2; --color-chart-custom: #db2777; --color-chart-grid: #d1d5db;
+    }
+    /* Ocean Theme (Dark) */
+    :root.dark.theme-ocean {
+      --color-primary: #38bdf8; /* sky-400 */
+      --color-primary-hover: #0ea5e9; /* sky-500 */
+      --color-primary-text: #ffffff;
+      --color-secondary-accent: #f472b6; /* pink-400 */
+      --color-secondary-accent-hover: #ec4899; /* pink-500 */
+      --color-bg-main: #0c1425; /* custom dark blue */
+      --color-bg-panel: #172a46; /* custom panel blue */
+      --color-text-main: #e2e8f0; /* slate-200 */
+      --color-text-secondary: #94a3b8; /* slate-400 */
+      --color-border-main: #334155; /* slate-700 */
+      --color-chart-input: #fbbf24; --color-chart-clean: #e2e8f0; --color-chart-baseline: #64748b; --color-chart-optimized: #38bdf8; --color-chart-custom: #f472b6; --color-chart-grid: #475569;
+    }
+    /* Forest Theme (Dark) */
+    :root.dark.theme-forest {
+      --color-primary: #4ade80; /* green-400 */
+      --color-primary-hover: #22c55e; /* green-500 */
+      --color-primary-text: #14532d;
+      --color-secondary-accent: #f9a8d4; /* pink-300 */
+      --color-secondary-accent-hover: #f472b6; /* pink-400 */
+      --color-bg-main: #1a2e29; /* custom dark green */
+      --color-bg-panel: #223c36; /* custom panel green */
+      --color-text-main: #d1fae5; /* green-50 */
+      --color-text-secondary: #a3b8a1; /* custom text */
+      --color-border-main: #3a5b51; /* custom border */
+      --color-chart-input: #facc15; --color-chart-clean: #d1fae5; --color-chart-baseline: #6ee7b7; --color-chart-optimized: #4ade80; --color-chart-custom: #f9a8d4; --color-chart-grid: #3a5b51;
+    }
+    /* Sunset Theme (Dark) */
+    :root.dark.theme-sunset {
+      --color-primary: #fb923c; /* orange-400 */
+      --color-primary-hover: #f97316; /* orange-500 */
+      --color-primary-text: #ffffff;
+      --color-secondary-accent: #a78bfa; /* violet-400 */
+      --color-secondary-accent-hover: #8b5cf6; /* violet-500 */
+      --color-bg-main: #2c1a1d; /* custom dark red */
+      --color-bg-panel: #4c2c2e; /* custom panel red */
+      --color-text-main: #fde8e4; /* custom text */
+      --color-text-secondary: #e5b3a8; /* custom text */
+      --color-border-main: #6b403d; /* custom border */
+      --color-chart-input: #fde047; --color-chart-clean: #fde8e4; --color-chart-baseline: #fdba74; --color-chart-optimized: #fb923c; --color-chart-custom: #a78bfa; --color-chart-grid: #6b403d;
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: 'var(--color-primary)',
+            'primary-hover': 'var(--color-primary-hover)',
+            'primary-text': 'var(--color-primary-text)',
+            'secondary-accent': 'var(--color-secondary-accent)',
+            'secondary-accent-hover': 'var(--color-secondary-accent-hover)',
+            'bg-main': 'var(--color-bg-main)',
+            'bg-panel': 'var(--color-bg-panel)',
+            'text-main': 'var(--color-text-main)',
+            'text-secondary': 'var(--color-text-secondary)',
+            'border-main': 'var(--color-border-main)',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+{
+  "name": "AI-Driven DSP Hardware Accelerator",
+  "description": "A dashboard to simulate and visualize AI-driven optimization of Digital Signal Processing (DSP) hardware blocks like FIR, IIR, and FFTs for biomedical and audio applications on FPGAs.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
