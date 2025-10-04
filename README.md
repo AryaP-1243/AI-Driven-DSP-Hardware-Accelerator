@@ -10,16 +10,20 @@ Configure: The user starts by building a DSP Chain in the sidebar, adding blocks
 Optimize: The user interacts with the AI through a Chat Panel. They describe their optimization goal, such as "minimize power consumption," "maximize throughput," or "preserve the shape of this specific waveform." They can also set hard constraints (e.g., maximum LUTs) and target specific FPGA hardware from vendors like Xilinx, Intel, or Lattice.
 Generate & Simulate: The AI processes this request and generates a complete, optimized hardware design. This isn't just a concept; it's a full package including:
 Synthesizable SystemVerilog HDL for the DSP block.
+
+
 A self-checking Testbench.
 A Tcl Synthesis Script for standard tools like Vivado or Quartus.
 A Stimulus File with relevant signal data.
 Hardware Metric Estimates (LUTs, Flip-Flops, DSP Slices, BRAMs, Throughput).
 An Explanation of its design choices.
-Analyze: The application immediately uses the AI's generated design (specifically, the filter coefficients and bit-widths) to run a client-side simulation. The user can visually and quantitatively compare the performance of the AI-optimized chain against both the raw input signal and a generic baseline chain. Key analysis views include:
-Time-Domain Chart: Shows the input, clean, baseline, and optimized signals.
-Frequency Response & Power Spectrum Charts: Visualize the filter's behavior in the frequency domain.
+Analyse: The application immediately uses the AI's generated design (specifically, the filter coefficients and bit-widths) to run a client-side simulation. The user can visually and quantitatively compare the performance of the AI-optimised chain against both the raw input signal and a generic baseline chain. Key analysis views include:
+Time-Domain Chart: Shows the input, clean, baseline, and optimised signals.
+Frequency Response & Power Spectrum Charts: Visualise the filter's behaviour in the frequency domain.
 Quantitative Metrics: Calculates Signal-to-Noise Ratio (SNR) and Mean Squared Error (MSE) for an objective measure of quality.
 Iterate & Refine: Based on the results, the user can send a follow-up prompt to the AI, such as "That used too many DSP slices, try again using only LUTs," and the AI will generate a new, refined design.
+
+
 Key Features & Capabilities
 Conversational AI Interaction: Leverages the Google Gemini API with a strict JSON schema to ensure structured, reliable responses that can be directly used by the application.
 Complex DSP Chain Simulation: Models a multi-block signal processing pipeline where the output of one block feeds into the next.
@@ -29,6 +33,8 @@ Live Audio Input: For audio-related signals, the app can request microphone acce
 "Hardware-in-the-Loop" Simulation: It features a simulated hardware validation flow. A user can "run synthesis" on an AI design, which returns slightly randomized "actual" hardware metrics. The user can then feed these results back to the AI to re-optimize the design based on real-world feedback.
 Trade-off Analysis: A dedicated panel allows users to adjust the data and coefficient bit-widths of an AI-generated design and get an immediate AI-powered estimate of how those changes will affect hardware costs and signal quality (SNR/MSE).
 Comprehensive Export: Users can download:
+
+
 Raw signal data as a CSV file.
 A full Markdown Report containing the configuration, AI explanation, metrics, and analysis.
 A complete ZIP Project with all the generated HDL and script files.
@@ -39,11 +45,6 @@ Styling: Tailwind CSS, with a sophisticated custom theming system using CSS vari
 AI Backend: The @google/genai SDK to communicate with the Gemini API.
 Charting: Recharts for interactive and responsive data visualization.
 Architecture: A modern, browser-based single-page application (SPA) with no server-side component (beyond the Gemini API itself). It uses an importmap for dependency management, avoiding a complex build step.
+
+
 In essence, this project is a powerful proof-of-concept demonstrating how generative AI can be integrated into highly technical engineering workflows to serve as an expert co-pilot, dramatically accelerating prototyping, analysis, and the exploration of complex design spaces.
-User
-Modify the geminiService.ts file to include the selected Filter Order, Filter Type, and Window Function in the prompt sent to the AI when optimizing FIR filters. Ensure these parameters are passed as part of the DspBlockConfig.
-Gemini 2.5 Pro
-Ran for 168s
-Thought for 75 seconds
-chevron_right
-Of course. I've updated the AI prompting to be more explicit. Now, when you specify a filter type (like low-pass) or a window function (like Hamming), the AI will be directly instructed to incorporate those specific design parameters when generating the FIR filter coefficients and hardware. This ensures the resulting optimization is even more closely aligned with your detailed requirements.
