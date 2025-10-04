@@ -38,22 +38,39 @@ The project is organized into a modular structure to separate concerns and enhan
 
 /
 ├── public/
+
 ├── src/
+
 │   ├── components/       # Reusable React components (Charts, Panels, Icons, etc.)
+
 │   │   ├── icons/        # SVG icon components
+
 │   │   └── ...
+
 │   ├── services/         # API communication layer
+
 │   │   └── geminiService.ts # Logic for prompting and parsing Gemini API responses
+
 │   ├── types/            # TypeScript type definitions
+
 │   │   └── types.ts
+
 │   ├── utils/            # Helper functions
+
 │   │   ├── analysis.ts   # SNR, MSE, PSD, and other signal analysis functions
+
 │   │   ├── dsp.ts        # Frontend DSP simulation functions (filtering, transforms)
+
 │   │   ├── export.ts     # Logic for exporting data, reports, and projects
+
 │   │   └── fixedPoint.ts # Fixed-point arithmetic simulation
+
 │   ├── App.tsx           # Main application component, state management
+
 │   └── index.tsx         # React application entry point
+
 ├── index.html            # Main HTML file with import maps
+
 └── metadata.json         # Application metadata
 
 
@@ -81,10 +98,13 @@ This will start the application, typically on http://localhost:5173.
 The application follows a streamlined workflow from concept to HDL insight.
 
 Configure: The user selects a DSP block to optimize from the DSP Chain panel in the sidebar. They choose a representative input signal, a target FPGA family, and a clock frequency.
+
 Optimize: The user describes their optimization goals in the chat panel. This prompt, along with the full system context (signal type, FPGA target, block settings, chat history), is sent to the Gemini API.
 Generate & Parse: The geminiService.ts constructs a detailed prompt, instructing the model to return a JSON object that adheres to a strict schema. This ensures the response includes synthesizable SystemVerilog, a testbench, hardware metrics, coefficients, and an explanation.
+
 Simulate & Analyze: The App.tsx component receives the AI-generated coefficients and runs a frontend simulation using the functions in utils/dsp.ts. The results are compared against the clean signal and a baseline filter using utils/analysis.ts to calculate SNR and MSE.
 Visualize & Iterate: The results are displayed in the interactive charts and metrics panels. The user can then refine their design with follow-up prompts, run hardware emulation, analyze bit-width trade-offs, or compare different optimization runs.
+
 Export: Once satisfied, the user can export the signal data, a full markdown report, or a complete, ready-to-synthesize ZIP file of the project.
 
 
