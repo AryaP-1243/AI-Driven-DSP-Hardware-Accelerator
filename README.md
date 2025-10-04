@@ -5,23 +5,34 @@ Users can define a DSP processing chain, select from a vast library of signal ty
 
 ✨ Key Features
 🤖 AI-Powered Optimization: Use natural language prompts to generate and refine DSP hardware designs. Ask for optimizations based on goals like minimizing latency, reducing resource usage, or maximizing throughput.
+
 ⛓️ Configurable DSP Chain: Build signal processing pipelines by chaining multiple DSP blocks (FIR, IIR, FFT, etc.).
+
 📈 Interactive Visualizations: Instantly see the effects of your DSP chain on signals in both the time and frequency domains with interactive charts.
+
 🔬 Quantitative Analysis: Objectively measure filter performance with key metrics like Signal-to-Noise Ratio (SNR), Mean Squared Error (MSE), and Power Spectral Density (PSD).
+
 🎯 Hardware-Aware Metrics: Get realistic hardware cost estimations (LUTs, FFs, DSPs, BRAMs) tailored to specific FPGA families from vendors like Xilinx, Intel, Lattice, and more.
+
 🔁 Hardware-in-the-Loop Simulation: Run "connectionless" hardware validation to get simulated post-synthesis metrics, then feed those results back to the AI for further optimization.
+
 ⚖️ Trade-off Analysis: Use the Bit-Width Analysis panel to instantly see how changing data and coefficient precision affects signal quality and hardware cost.
+
 📊 Pareto Frontier Plots: Compare multiple optimization runs visually to understand the trade-offs between performance (e.g., SNR) and cost (e.g., LUTs).
+
 🎤 Live Audio Input: For audio applications, use your microphone as a real-time signal source to see your DSP chain in action.
+
 📑 Publication-Ready Exports:
 CSV: Export raw signal data for external analysis.
 Markdown Report: Generate a comprehensive report including your configuration, AI strategy, metrics, and generated HDL.
 ZIP Project: Download a complete, self-contained project with the HDL module, testbench, synthesis script, and stimulus file.
+
 🛠️ Technology Stack
 Frontend: React, TypeScript, Tailwind CSS
 AI Engine: Google Gemini API (@google/genai) for code generation, explanation, and metric estimation.
 Charting: Recharts for interactive and responsive data visualization.
 File Packaging: JSZip for creating downloadable project archives.
+
 📁 Project Structure
 The project is organized into a modular structure to separate concerns and enhance maintainability.
 
