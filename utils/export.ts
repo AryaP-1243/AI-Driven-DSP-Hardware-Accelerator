@@ -1,4 +1,5 @@
 
+
 import { ChartDataPoint, OptimizationResult, AnalysisResults, FpgaTarget, BlockType, SignalType } from '../types';
 import JSZip from 'jszip';
 

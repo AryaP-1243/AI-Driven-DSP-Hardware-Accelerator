@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { ProcessorIcon } from './icons/ProcessorIcon';
 import { MenuIcon } from './icons/MenuIcon';
@@ -21,6 +22,10 @@ const themes: { name: Theme, label: string }[] = [
     { name: 'ocean', label: 'Ocean' },
     { name: 'forest', label: 'Forest' },
     { name: 'sunset', label: 'Sunset' },
+    { name: 'matrix', label: 'Matrix' },
+    { name: 'dracula', label: 'Dracula' },
+    { name: 'cyberpunk', label: 'Cyberpunk' },
+    { name: 'solarized', label: 'Solarized' },
 ];
 
 const Header: React.FC<HeaderProps> = ({ currentUser, onLogout, onToggleSidebar, theme, setTheme }) => {

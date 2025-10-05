@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { SignalType, ChartDataPoint, FpgaTarget, Theme, ChatMessage, OptimizationConstraints, FrequencyDataPoint, AnalysisResults, BitWidthAnalysis, PowerSpectrumDataPoint, DspBlockConfig } from '../types';
 import SignalChart from './SignalChart';
@@ -154,7 +155,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     if (!isFreqPanning || !freqChartWrapperRef.current) return; e.preventDefault();
     const chartWidth = freqChartWrapperRef.current.clientWidth; if (chartWidth === 0) return;
     const domainRange = freqPanStartCoords.domainMax - freqPanStartCoords.domainMin;
-    const dx = e.clientX - freqPanStartCoords.x;
+    const dx = e.clientX - timePanStartCoords.x;
     const domainDelta = (dx / chartWidth) * domainRange;
     let newMin = freqPanStartCoords.domainMin - domainDelta; let newMax = freqPanStartCoords.domainMax - domainDelta;
     if (newMin < 0) { newMin = 0; newMax = newMin + domainRange; }

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
@@ -12,38 +13,38 @@ import { applyFixedPointFilter, applyDucDdc, applyMixing, applyPhaseDetection, a
 
 // --- PRE-LOADED EXAMPLE STATE ---
 const exampleOptimizationResult: OptimizationResult = {
-  explanation: "For this ECG denoising task, I've designed a symmetric, 11-tap FIR low-pass filter. The coefficients are quantized to 16 bits to maintain high fidelity and preserve the crucial QRS complex shape. The architecture uses a pipelined multiply-accumulate (MAC) structure, leveraging 6 DSP slices on the Artix-7 for parallel computation. This achieves a throughput of one sample per clock cycle while keeping LUT usage minimal.",
+  explanation: "For BPSK symbol detection, I've designed an 11-tap Root-Raised Cosine (RRC) matched filter with an alpha of 0.35. The symmetric coefficients are quantized to 16-bits to maximize SNR at the decision point. The architecture is a pipelined FIR structure optimized for Artix-7, using 6 DSP slices for high throughput, enabling one sample per clock cycle processing.",
   metrics: {
-    lutCount: "~380",
-    ffCount: "~410",
+    lutCount: "~420",
+    ffCount: "~450",
     dspSlices: "6",
     bramBlocks: "0",
     cyclesPerSample: "1",
     throughput: "100 MSPS"
   },
-  coefficients: [-0.003, 0.005, 0.031, 0.107, 0.222, 0.276, 0.222, 0.107, 0.031, 0.005, -0.003],
+  coefficients: [-0.013, 0.0, 0.051, 0.128, 0.205, 0.256, 0.205, 0.128, 0.051, 0.0, -0.013],
   dataBitWidth: 16,
   coefficientBitWidth: 16,
   hdlModule: `/*
- * 11-Tap Symmetric FIR Filter for ECG Denoising
- * Target: Artix-7, 100 MHz Clock
+ * 11-Tap RRC Matched Filter for BPSK
+ * Target: Artix-7, 100 MHz Clock, Alpha=0.35
  */
-module fir_filter (
+module matched_filter_bpsk (
     input clk,
     input reset,
     input signed [15:0] data_in,
     output signed [15:0] data_out
 );
 
-    // Coefficients (16-bit quantized)
-    localparam signed [15:0] COEFF_0 = 16'shFFFD; // -0.003
-    localparam signed [15:0] COEFF_1 = 16'h000A; //  0.005
-    localparam signed [15:0] COEFF_2 = 16'h0040; //  0.031
-    localparam signed [15:0] COEFF_3 = 16'h015B; //  0.107
-    localparam signed [15:0] COEFF_4 = 16'h038E; //  0.222
-    localparam signed [15:0] COEFF_5 = 16'h046A; //  0.276
+    // Coefficients (16-bit quantized RRC)
+    localparam signed [15:0] COEFF_0 = 16'shFFD7; // -0.013
+    localparam signed [15:0] COEFF_1 = 16'h0000; //  0.0
+    localparam signed [15:0] COEFF_2 = 16'h00A6; //  0.051
+    localparam signed [15:0] COEFF_3 = 16'h0208; //  0.128
+    localparam signed [15:0] COEFF_4 = 16'h0348; //  0.205
+    localparam signed [15:0] COEFF_5 = 16'h0417; //  0.256
 
-    // Input data pipeline registers
+    // Input data pipeline registers (delay line)
     reg signed [15:0] delay_line [0:10];
     always @(posedge clk) begin
         if (reset) begin
@@ -56,21 +57,20 @@ module fir_filter (
         end
     end
 
-    // Utilize symmetry: sum samples before multiplying
-    reg signed [16:0] sum_0_10, sum_1_9, sum_2_8, sum_3_7, sum_4_6;
+    // Utilize symmetry to save multipliers
+    reg signed [16:0] sum_0_10, sum_2_8, sum_3_7, sum_4_6;
     always @(posedge clk) begin
       sum_0_10 <= delay_line[0] + delay_line[10];
-      sum_1_9  <= delay_line[1] + delay_line[9];
+      // sum_1_9 is zero due to coefficient
       sum_2_8  <= delay_line[2] + delay_line[8];
       sum_3_7  <= delay_line[3] + delay_line[7];
       sum_4_6  <= delay_line[4] + delay_line[6];
     end
 
     // Multiply stage (inferred DSP slices)
-    reg signed [32:0] p0, p1, p2, p3, p4, p5;
+    reg signed [32:0] p0, p2, p3, p4, p5;
     always @(posedge clk) begin
         p0 <= sum_0_10 * COEFF_0;
-        p1 <= sum_1_9  * COEFF_1;
         p2 <= sum_2_8  * COEFF_2;
         p3 <= sum_3_7  * COEFF_3;
         p4 <= sum_4_6  * COEFF_4;
@@ -80,17 +80,17 @@ module fir_filter (
     // Final accumulator stage
     reg signed [32:0] accumulator_sum;
     always @(posedge clk) begin
-        accumulator_sum <= p0 + p1 + p2 + p3 + p4 + p5;
+        accumulator_sum <= p0 + p2 + p3 + p4 + p5;
     end
     
     // Truncate output
     assign data_out = accumulator_sum >>> 15;
 
 endmodule`,
-  hdlTestbench: `// Testbench for 11-Tap FIR Filter
+  hdlTestbench: `// Testbench for BPSK Matched Filter
 \`timescale 1ns / 1ps
 
-module fir_filter_tb;
+module matched_filter_bpsk_tb;
 
     reg clk;
     reg reset;
@@ -98,7 +98,7 @@ module fir_filter_tb;
     wire signed [15:0] data_out;
 
     // Instantiate the DUT
-    fir_filter dut (
+    matched_filter_bpsk dut (
         .clk(clk),
         .reset(reset),
         .data_in(data_in),
@@ -113,7 +113,7 @@ module fir_filter_tb;
 
     // Stimulus from file
     integer stimulus_file;
-    reg [15:0] stimulus_vector;
+    reg signed [15:0] stimulus_vector;
     initial begin
         stimulus_file = $fopen("stimulus.txt", "r");
         if (stimulus_file == 0) begin
@@ -139,24 +139,24 @@ module fir_filter_tb;
     end
 
 endmodule`,
-  synthesisScript: `# Vivado Synthesis Script for FIR Filter
+  synthesisScript: `# Vivado Synthesis Script for BPSK Matched Filter
 create_project -in_memory -part xc7a35tcpg236-1
-add_files {fir_filter.sv}
-set_property top fir_filter [current_fileset]
+add_files {matched_filter_bpsk.sv}
+set_property top matched_filter_bpsk [current_fileset]
 update_compile_order -fileset sources_1
 create_clock -period 10.000 [get_ports clk]
-synth_design -top fir_filter -part xc7a35tcpg236-1
+synth_design -top matched_filter_bpsk -part xc7a35tcpg236-1
 report_utilization -hierarchical`,
-  stimulusFileContent: `-655\n-983\n-1310\n-1310\n-1638\n-1638\n-1310\n-1638\n-1310\n-1310\n-983\n-983\n-983\n-655\n-655\n-655\n-327\n-327\n-327\n0\n0\n2293\n13107\n2293\n-327\n-983\n-655\n-327\n-327\n-327\n0\n0\n327\n327\n327\n327\n655\n655\n983\n983\n983\n983\n1310\n1310\n1310\n1638\n1638\n1638\n1966\n1966\n1966`
+  stimulusFileContent: `2850\n5391\n7323\n8400\n8448\n7449\n5554\n3014\n131\n-2916\n-5767\n-8081\n-9630\n-10252\n-9920\n-8724\n-6830\n-4488\n-1956\n770\n3421\n5743\n7535\n8660\n9043\n8684\n7653\n6084\n4148\n1985\n-311\n-2619\n-4779\n-6663\n-8153\n-9160\n-9626\n-9537\n-8922\n-7848\n-6415\n-4739\n-2921\n-1052\n800\n2553\n4112\n5391\n6320\n6850`
 };
 const exampleAnalysisResults: AnalysisResults = {
-  baseline: { snr: 15.23, mse: 0.0021 },
-  aiOptimized: { snr: 28.71, mse: 0.00011 }
+  baseline: { snr: 4.88, mse: 0.033 },
+  aiOptimized: { snr: 18.21, mse: 0.0015 }
 };
 const exampleChatHistory: ChatMessage[] = [
     {
         role: 'user',
-        text: 'Design an FIR filter to remove high-frequency noise from this ECG signal. Prioritize preserving the shape of the QRS complex. Target a low-power Xilinx Artix-7 FPGA.'
+        text: 'Design a matched filter for this BPSK signal. The goal is to maximize SNR for symbol detection. Use an 11-tap RRC filter with an alpha of 0.35. Target a Xilinx Artix-7.'
     },
     {
         role: 'ai',
@@ -396,7 +396,7 @@ const generateSignalData = (signalType: SignalType): { cleanData: number[], nois
   return { cleanData: finalCleanData, noisyData };
 };
 
-const getThemeMode = (theme: Theme): ThemeMode => (theme === 'light' ? 'light' : 'dark');
+const getThemeMode = (theme: Theme): ThemeMode => (theme === 'light' || theme === 'solarized' ? 'light' : 'dark');
 
 const getSamplingRate = (signalType: SignalType): number => {
     switch(signalType) {
@@ -448,7 +448,7 @@ const App: React.FC = () => {
   const [view, setView] = useState<'landing' | 'auth' | 'dashboard'>('landing');
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [theme, setTheme] = useState<Theme>('dark');
-  const [selectedSignal, setSelectedSignal] = useState<SignalType>('ECG');
+  const [selectedSignal, setSelectedSignal] = useState<SignalType>('BPSK Signal');
   const [dspChain, setDspChain] = useState<DspBlockConfig[]>([{
       id: 'example-fir',
       type: 'FIR',

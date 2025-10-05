@@ -1,3 +1,4 @@
+
 export type SignalType = 
   // Biomedical
   'ECG' | 'ECG (Arrhythmia)' | 'ECG (Arrhythmia Simulation)' | 'ECG (Noise Artifacts)' | 'ECG (PAC/PVC beats)' | 'Fetal ECG' |
@@ -28,7 +29,7 @@ export type SignalType =
   'Stock Price (Simulated)' | 'Volatility Index (Sim.)' | 'MACD Indicator (Sim.)' |
   'Weather Sensor Data' | 'Light Sensor Data';
 
-export type Theme = 'dark' | 'light' | 'ocean' | 'forest' | 'sunset';
+export type Theme = 'dark' | 'light' | 'ocean' | 'forest' | 'sunset' | 'matrix' | 'dracula' | 'cyberpunk' | 'solarized';
 export type ThemeMode = 'light' | 'dark';
 export type WindowType = 'None' | 'Hamming' | 'Blackman' | 'Hann';
 export type FilterType = 'Low-pass' | 'High-pass' | 'Band-pass' | 'Band-stop';
