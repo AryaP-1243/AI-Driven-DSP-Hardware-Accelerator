@@ -1,7 +1,6 @@
 # AI-Driven DSP Hardware Accelerator
 
 <div align="center">
-  <img src="https://storage.googleapis.com/aistudio-o-images/210a80e5-7489-4b66-83a3-a3163351656b" width="150" alt="Project Logo">
   <h1>AI-Driven DSP Hardware Accelerator</h1>
   <p>
     An interactive dashboard that leverages Generative AI to design, analyze, and generate synthesizable HDL for Digital Signal Processing blocks on FPGAs.
