@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
@@ -1164,7 +1165,7 @@ const App: React.FC = () => {
             aria-hidden="true" 
         />
       )}
-      <div className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${isSidebarOpen ? 'md:ml-64' : 'ml-0'} relative z-0`}>
+      <div className="flex-1 flex flex-col transition-all duration-300 ease-in-out relative z-0">
         <Header 
           currentUser={currentUser}
           onLogout={handleLogout}

@@ -197,112 +197,117 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 
   return (
-    <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-bg-panel px-4 pb-4 pt-20 md:px-6 md:pb-6 border-r border-border-main transform transition-transform duration-300 ease-in-out md:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-      <div className="flex justify-between items-center mb-6 md:hidden">
-          <h2 className="text-lg font-bold text-text-main">Configuration</h2>
-          <button onClick={onClose} className="p-2 rounded-full text-text-secondary hover:bg-black/10 dark:hover:bg-white/10 hover:text-text-main transition-colors" aria-label="Close sidebar">
-            <CloseIcon className="w-6 h-6" />
-          </button>
-      </div>
-
-      <div className="space-y-6 h-full flex flex-col">
-        {/* DSP CHAIN SECTION */}
-        <div>
-          <h2 className="text-sm font-semibold text-text-secondary uppercase tracking-wider flex items-center mb-3">
-             <SystemIcon className="w-5 h-5 mr-2" />
-            DSP Chain
-          </h2>
-          <div className="flex flex-col text-center text-xs font-semibold text-text-secondary">
-              <div className="p-2 bg-bg-main border-x border-t border-border-main rounded-t-md">Input Signal</div>
-              <div className="h-3 w-px bg-border-main mx-auto"/>
-              <div className="space-y-1 max-h-40 overflow-y-auto px-1">
-                {dspChain.length > 0 ? dspChain.map((block, index) => (
-                    <div key={block.id}>
-                      <div className="relative group flex items-center">
-                         <div className="absolute top-[-5px] bottom-[-5px] left-1/2 -translate-x-1/2 w-px bg-border-main -z-10"/>
-                        <button
-                            onClick={() => setActiveBlockIndex(index)}
-                            className={`flex-grow text-left p-2 rounded-md text-sm transition-colors z-0 ${activeBlockIndex === index ? 'bg-primary text-primary-text font-semibold' : 'bg-bg-panel hover:bg-black/10 dark:hover:bg-white/10 text-text-main'}`}
-                        >
-                           {index + 1}. {block.type}
-                        </button>
-                        <button onClick={() => removeBlockFromChain(block.id)} className="ml-2 p-1 text-text-secondary hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity z-10" aria-label={`Remove ${block.type}`}>
-                            <CloseIcon className="w-4 h-4" />
-                        </button>
-                      </div>
-                      {block.type === 'FFT' && activeBlockIndex === index && (
-                          <div className="p-3 my-1 border border-primary/20 bg-primary/5 rounded-md text-left text-sm space-y-2">
-                               <div>
-                                  <label htmlFor={`fft-size-${block.id}`} className="text-xs font-medium text-text-secondary">FFT Size</label>
-                                  <select 
-                                    id={`fft-size-${block.id}`}
-                                    value={block.settings?.fftSize || 256} 
-                                    onChange={(e) => handleFftSettingChange('fftSize', parseInt(e.target.value, 10))}
-                                    className="w-full mt-1 p-1 bg-bg-main border border-border-main rounded-md focus:ring-1 focus:ring-primary focus:outline-none text-text-main text-xs"
-                                  >
-                                    {fftSizes.map(size => <option key={size} value={size}>{size} points</option>)}
-                                  </select>
-                               </div>
-                               <div>
-                                  <label htmlFor={`fft-window-${block.id}`} className="text-xs font-medium text-text-secondary">Window</label>
-                                  <select
-                                    id={`fft-window-${block.id}`}
-                                    value={block.settings?.windowType || 'None'}
-                                    onChange={(e) => handleFftSettingChange('windowType', e.target.value as WindowType)}
-                                    className="w-full mt-1 p-1 bg-bg-main border border-border-main rounded-md focus:ring-1 focus:ring-primary focus:outline-none text-text-main text-xs"
-                                  >
-                                    {windowTypes.map(type => <option key={type} value={type}>{type}</option>)}
-                                  </select>
-                               </div>
-                          </div>
-                      )}
-                    </div>
-                )) : (
-                     <div className="p-3 my-1 border border-dashed border-border-main rounded-md text-text-secondary text-sm">Chain is empty</div>
-                )}
-              </div>
-              <div className="h-3 w-px bg-border-main mx-auto"/>
-              <div className="p-2 bg-bg-main border-x border-b border-border-main rounded-b-md">Final Output</div>
-          </div>
-           <div className="flex space-x-2 mt-3">
-              <CustomSelect
-                  value={blockToAdd}
-                  onChange={(val) => setBlockToAdd(val as BlockType)}
-                  options={blockCategories}
-              />
-              <button onClick={addBlockToChain} className="px-3 bg-primary hover:bg-primary-hover text-primary-text font-bold rounded-md transition-colors text-sm">Add</button>
-           </div>
+    <aside className={`bg-bg-panel border-r border-border-main 
+      fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out md:transform-none
+      ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+      md:relative md:flex-shrink-0 md:transition-all ${isOpen ? 'md:w-64' : 'md:w-0'} overflow-hidden`}>
+      <div className="w-64 h-full flex flex-col">
+        <div className="px-4 md:px-6 pt-6 flex justify-between items-center md:hidden">
+            <h2 className="text-lg font-bold text-text-main">Configuration</h2>
+            <button onClick={onClose} className="p-2 rounded-full text-text-secondary hover:bg-black/10 dark:hover:bg-white/10 hover:text-text-main transition-colors" aria-label="Close sidebar">
+              <CloseIcon className="w-6 h-6" />
+            </button>
         </div>
-        
-        {/* SIGNAL SOURCE SECTION */}
-        <div className="flex-grow flex flex-col min-h-0">
-          <h2 className="text-sm font-semibold text-text-secondary uppercase tracking-wider flex items-center mb-3">
-             <SignalIcon className="w-5 h-5 mr-2" />
-            Signal Source
-          </h2>
-          <div className="flex-grow overflow-y-auto pr-2 space-y-4">
-            {signalCategories.map(category => (
-                <div key={category.name}>
-                    <h3 className="text-xs font-bold text-text-secondary mb-2">{category.name}</h3>
-                    <ul className="space-y-1.5">
-                        {category.types.map((signal) => (
-                            <SidebarButton
-                                key={signal}
-                                label={signal}
-                                isActive={selectedSignal === signal}
-                                onClick={() => setSelectedSignal(signal)}
-                            />
-                        ))}
-                    </ul>
+
+        <div className="px-4 md:px-6 py-6 space-y-6 h-full flex flex-col">
+          {/* DSP CHAIN SECTION */}
+          <div>
+            <h2 className="text-sm font-semibold text-text-secondary uppercase tracking-wider flex items-center mb-3">
+              <SystemIcon className="w-5 h-5 mr-2" />
+              DSP Chain
+            </h2>
+            <div className="flex flex-col text-center text-xs font-semibold text-text-secondary">
+                <div className="p-2 bg-bg-main border-x border-t border-border-main rounded-t-md">Input Signal</div>
+                <div className="h-3 w-px bg-border-main mx-auto"/>
+                <div className="space-y-1 max-h-40 overflow-y-auto px-1">
+                  {dspChain.length > 0 ? dspChain.map((block, index) => (
+                      <div key={block.id}>
+                        <div className="relative group flex items-center">
+                          <div className="absolute top-[-5px] bottom-[-5px] left-1/2 -translate-x-1/2 w-px bg-border-main -z-10"/>
+                          <button
+                              onClick={() => setActiveBlockIndex(index)}
+                              className={`flex-grow text-left p-2 rounded-md text-sm transition-colors z-0 ${activeBlockIndex === index ? 'bg-primary text-primary-text font-semibold' : 'bg-bg-panel hover:bg-black/10 dark:hover:bg-white/10 text-text-main'}`}
+                          >
+                            {index + 1}. {block.type}
+                          </button>
+                          <button onClick={() => removeBlockFromChain(block.id)} className="ml-2 p-1 text-text-secondary hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity z-10" aria-label={`Remove ${block.type}`}>
+                              <CloseIcon className="w-4 h-4" />
+                          </button>
+                        </div>
+                        {block.type === 'FFT' && activeBlockIndex === index && (
+                            <div className="p-3 my-1 border border-primary/20 bg-primary/5 rounded-md text-left text-sm space-y-2">
+                                  <div>
+                                    <label htmlFor={`fft-size-${block.id}`} className="text-xs font-medium text-text-secondary">FFT Size</label>
+                                    <select 
+                                      id={`fft-size-${block.id}`}
+                                      value={block.settings?.fftSize || 256} 
+                                      onChange={(e) => handleFftSettingChange('fftSize', parseInt(e.target.value, 10))}
+                                      className="w-full mt-1 p-1 bg-bg-main border border-border-main rounded-md focus:ring-1 focus:ring-primary focus:outline-none text-text-main text-xs"
+                                    >
+                                      {fftSizes.map(size => <option key={size} value={size}>{size} points</option>)}
+                                    </select>
+                                  </div>
+                                  <div>
+                                    <label htmlFor={`fft-window-${block.id}`} className="text-xs font-medium text-text-secondary">Window</label>
+                                    <select
+                                      id={`fft-window-${block.id}`}
+                                      value={block.settings?.windowType || 'None'}
+                                      onChange={(e) => handleFftSettingChange('windowType', e.target.value as WindowType)}
+                                      className="w-full mt-1 p-1 bg-bg-main border border-border-main rounded-md focus:ring-1 focus:ring-primary focus:outline-none text-text-main text-xs"
+                                    >
+                                      {windowTypes.map(type => <option key={type} value={type}>{type}</option>)}
+                                    </select>
+                                  </div>
+                            </div>
+                        )}
+                      </div>
+                  )) : (
+                      <div className="p-3 my-1 border border-dashed border-border-main rounded-md text-text-secondary text-sm">Chain is empty</div>
+                  )}
                 </div>
-            ))}
+                <div className="h-3 w-px bg-border-main mx-auto"/>
+                <div className="p-2 bg-bg-main border-x border-b border-border-main rounded-b-md">Final Output</div>
+            </div>
+            <div className="flex space-x-2 mt-3">
+                <CustomSelect
+                    value={blockToAdd}
+                    onChange={(val) => setBlockToAdd(val as BlockType)}
+                    options={blockCategories}
+                />
+                <button onClick={addBlockToChain} className="px-3 bg-primary hover:bg-primary-hover text-primary-text font-bold rounded-md transition-colors text-sm">Add</button>
+            </div>
           </div>
-           {isAudioSignal && (
-              <div className="mt-4 p-3 bg-black/5 dark:bg-white/5 rounded-md border border-border-main flex-shrink-0">
-                  <ToggleSwitch label="Use Microphone" enabled={isLiveInput} onChange={setIsLiveInput} />
-                  <p className="text-xs text-text-secondary mt-2">Enable to use live audio as the signal source.</p>
-              </div>
-            )}
+          
+          {/* SIGNAL SOURCE SECTION */}
+          <div className="flex-grow flex flex-col min-h-0">
+            <h2 className="text-sm font-semibold text-text-secondary uppercase tracking-wider flex items-center mb-3">
+              <SignalIcon className="w-5 h-5 mr-2" />
+              Signal Source
+            </h2>
+            <div className="flex-grow overflow-y-auto pr-2 space-y-4">
+              {signalCategories.map(category => (
+                  <div key={category.name}>
+                      <h3 className="text-xs font-bold text-text-secondary mb-2">{category.name}</h3>
+                      <ul className="space-y-1.5">
+                          {category.types.map((signal) => (
+                              <SidebarButton
+                                  key={signal}
+                                  label={signal}
+                                  isActive={selectedSignal === signal}
+                                  onClick={() => setSelectedSignal(signal)}
+                              />
+                          ))}
+                      </ul>
+                  </div>
+              ))}
+            </div>
+            {isAudioSignal && (
+                <div className="mt-4 p-3 bg-black/5 dark:bg-white/5 rounded-md border border-border-main flex-shrink-0">
+                    <ToggleSwitch label="Use Microphone" enabled={isLiveInput} onChange={setIsLiveInput} />
+                    <p className="text-xs text-text-secondary mt-2">Enable to use live audio as the signal source.</p>
+                </div>
+              )}
+          </div>
         </div>
       </div>
     </aside>
