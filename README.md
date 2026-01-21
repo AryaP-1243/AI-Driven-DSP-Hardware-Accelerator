@@ -1,7 +1,10 @@
+
 # AI-Driven DSP Hardware Accelerator
 
 <div align="center">
-  <img src="https://storage.googleapis.com/aistudio-o-images/210a80e5-7489-4b66-83a3-a3163351656b" width="150" alt="Project Logo">
+  <div style="background-color: #f3f4f6; padding: 20px; border-radius: 50%; display: inline-block; margin-bottom: 20px;">
+    <img src="https://storage.googleapis.com/aistudio-o-images/210a80e5-7489-4b66-83a3-a3163351656b" width="120" alt="Project Logo">
+  </div>
   <h1>AI-Driven DSP Hardware Accelerator</h1>
   <p>
     An interactive dashboard that leverages Generative AI to design, analyze, and generate synthesizable HDL for Digital Signal Processing blocks on FPGAs.
@@ -15,9 +18,6 @@
 ![FPGA](https://img.shields.io/badge/FPGA-Multi--Vendor-orange)
 
 </div>
-
-<!-- Optional: Add a GIF of the application in action here -->
-<!-- ![App Demo GIF](path/to/your/demo.gif) -->
 
 This project is an interactive web-based dashboard for simulating and visualizing the AI-driven optimization of Digital Signal Processing (DSP) hardware blocks. It provides a platform for engineers, researchers, and students to explore the trade-offs between DSP algorithms and their hardware implementations on FPGAs, leveraging the power of the **Google Gemini API** for code generation and performance estimation.
 
@@ -70,7 +70,7 @@ The application follows a streamlined workflow from concept to HDL insight.
 
 *   **Frontend:** React 19, TypeScript, Tailwind CSS
 *   **AI Engine:** Google Gemini API (`@google/genai`) for code generation, explanation, and metric estimation.
-*   **Charting:** Recharts for interactive and responsive data visualization.
+*   **Visualization:** Recharts for interactive and responsive data visualization.
 *   **File Packaging:** JSZip for creating downloadable project archives.
 
 ---
@@ -112,32 +112,6 @@ To run this project on your local machine, follow these steps.
     npm run dev
     ```
     The application should now be running at `http://localhost:5173` (or the next available port).
-
----
-
-## 🔬 From Simulation to Silicon
-
-While the web app provides a powerful simulation environment, its ultimate goal is to generate real-world hardware. The **Download Project (.zip)** feature is the bridge between simulation and silicon.
-
-The generated ZIP archive contains a complete, self-contained, and synthesizable project, including:
-*   **`module.sv`**: The AI-optimized SystemVerilog module.
-*   **`module_tb.sv`**: A self-checking testbench.
-*   **`stimulus.txt`**: The input data used by the testbench.
-*   **`synth.tcl`**: A synthesis script for Vivado or Quartus.
-
-This project can be directly opened in the appropriate FPGA vendor tool (e.g., Vivado for Xilinx targets) to be synthesized, implemented, and deployed on a physical FPGA board.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to open an issue or submit a pull request.
-
-1.  Fork the Project
-2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4.  Push to the Branch (`git push origin feature/AmazingFeature`)
-5.  Open a Pull Request
 
 ---
 

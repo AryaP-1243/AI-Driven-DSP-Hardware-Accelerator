@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { SignalType, BlockType, DspBlockConfig, WindowType, FilterType } from '../types';
 import { SignalIcon } from './icons/SignalIcon';
@@ -135,7 +136,7 @@ const blockCategories: { group: string; items: { label: string; value: BlockType
 ];
 
 
-const ToggleSwitch: React.FC<{ label: string; enabled: boolean; onChange: (enabled: boolean) => void;}> = ({ label, enabled, onChange }) => (
+const ToggleSwitch: React.FC<{ label: string; enabled: boolean; onChange: (enabled: boolean) => void }> = ({ label, enabled, onChange }) => (
     <div className="flex items-center justify-between">
       <span className="text-sm font-medium text-text-main">{label}</span>
       <button onClick={() => onChange(!enabled)}

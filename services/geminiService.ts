@@ -2,8 +2,6 @@
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { BlockType, SignalType, OptimizationResult, FpgaTarget, ChatMessage, OptimizationConstraints, HardwareMetrics, DspBlockConfig, AnalysisResults } from '../types';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
-
 const schema = {
   type: Type.OBJECT,
   properties: {
@@ -189,6 +187,8 @@ export const optimizeDspBlock = async (
   signalData: number[],
   image?: { base64Data: string; mimeType: string; }
 ): Promise<OptimizationResult> => {
+  // Correctly initialized with process.env.API_KEY
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   const prompt = buildPrompt(dspChain, activeBlockIndex, signalType, chatHistory, fpgaTarget, clockFrequency, constraints, !!image, signalData);
   
@@ -207,8 +207,9 @@ export const optimizeDspBlock = async (
   }
 
   try {
+    // Upgraded to gemini-3-pro-preview for complex DSP/coding task
     const response: GenerateContentResponse = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3-pro-preview",
       contents: contents,
       config: {
         responseMimeType: "application/json",
@@ -236,6 +237,7 @@ export const optimizeWithHardwareFeedback = async (
     if (!previousMessage.result || !previousMessage.analysis?.validatedMetrics) {
         throw new Error("Cannot run HIL optimization without a previous result and validated metrics.");
     }
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
     const previousResult = previousMessage.result;
     const validatedMetrics = previousMessage.analysis.validatedMetrics;
@@ -267,7 +269,7 @@ export const optimizeWithHardwareFeedback = async (
 
     try {
         const response: GenerateContentResponse = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
+            model: "gemini-3-pro-preview",
             contents: prompt,
             config: {
                 responseMimeType: "application/json",
@@ -301,6 +303,7 @@ export const estimateHardwareForBitWidths = async (
     newDataBitWidth: number,
     newCoeffBitWidth: number
 ): Promise<HardwareMetrics> => {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
     const prompt = `
       You are an expert FPGA design engineer.
@@ -332,7 +335,7 @@ export const estimateHardwareForBitWidths = async (
 
     try {
         const response: GenerateContentResponse = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
+            model: "gemini-3-pro-preview",
             contents: prompt,
             config: {
                 responseMimeType: "application/json",
